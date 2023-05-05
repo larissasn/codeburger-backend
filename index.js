@@ -1,9 +1,10 @@
 const express = require('express')
 const uuid = require('uuid')
-const port = 3000
+const cors = require('cors')
+const port = 3001
 const app = express()
 app.use(express.json())
-
+app.use(cors())
 const orders = []
 
 const checkOrderId = (request, reponse, next) => {
@@ -25,8 +26,8 @@ app.get('/orders', (request, response) => {
 })
 
 app.post('/orders', (request, response) => {
-   const { order, clientName, price } = request.body
-   const newOrders = { id: uuid.v4(), order, clientName, price, status: "Em preparação" }
+   const { order, clientName } = request.body
+   const newOrders = { id: uuid.v4(), order, clientName, price: "R$59,80", status: "Em preparação" }
 
    orders.push(newOrders)
 
@@ -37,8 +38,8 @@ app.post('/orders', (request, response) => {
 app.put('/orders/:id', checkOrderId, (request, response) => {
    const index = request.orderIndex
    const id = request.orderId
-   const { order, clientName, price } = request.body
-   const updateOrder = { id, order, clientName, price, "status": "Em preparação" }  
+   const { order, clientName} = request.body
+   const updateOrder = { id, order, clientName, "updated price": "R$70,00", "status": "Pedido alterado com sucesso!" }  
 
    orders[index] = updateOrder
 
@@ -65,7 +66,7 @@ app.patch('/orders/:id', checkOrderId, (request, response) => {
    const order = orders[index]
 
    order.status = "Pronto"
-
+   
    return response.json(order)
 })
 
